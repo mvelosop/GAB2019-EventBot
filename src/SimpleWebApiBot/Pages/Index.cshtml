@@ -1,0 +1,12 @@
+﻿@page
+@model SimpleWebApiBot.Pages.IndexModel
+@{
+    ViewData["Title"] = "Index";
+
+    var request = ViewContext.HttpContext.Request;
+    var baseUrl = $"{request.Scheme}://{request.Host}";
+}
+
+<h1>Simple Web API Bot</h1>
+
+Bot messages endpoint: <strong>@(baseUrl)/simple-bot/messages</strong>    
