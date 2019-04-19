@@ -44,9 +44,11 @@ namespace SimpleWebApiBot
             services.AddSingleton<IAdapterIntegration>(sp => 
             {
                 var logger = sp.GetRequiredService<ILogger<IAdapterIntegration>>();
+                var appId = Configuration["BotWebApiApp:AppId"];
+                var appPassword = Configuration["BotWebApiApp:AppPassword"];
 
                 var adapter = new BotFrameworkAdapter(
-                    credentialProvider: new SimpleCredentialProvider(),
+                    credentialProvider: new SimpleCredentialProvider(appId, appPassword),
                     logger: logger);
 
                 adapter.OnTurnError = async (context, exception) =>

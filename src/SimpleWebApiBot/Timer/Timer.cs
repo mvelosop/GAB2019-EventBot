@@ -11,15 +11,18 @@ namespace SimpleWebApiBot.Timer
     public class Timer
     {
         private readonly IAdapterIntegration _adapter;
+        private readonly string _botAppId;
         private readonly ILogger _logger;
 
         public Timer(
             IAdapterIntegration adapter,
+            string botAppId,
             ConversationReference conversationReference,
             int seconds,
             int number)
         {
             _adapter = adapter;
+            _botAppId = botAppId;
             _logger = Log.ForContext<Timer>();
 
             ConversationReference = conversationReference;
@@ -55,7 +58,7 @@ namespace SimpleWebApiBot.Timer
 
             _logger.Information("----- Timer #{Number} [{Duration}s] finished ({Elapsed:n3}s)", Number, Seconds, Elapsed / 1000);
 
-            await _adapter.ContinueConversationAsync("not-important-for-emulator", ConversationReference, SendMessageAsync);
+            await _adapter.ContinueConversationAsync(_botAppId, ConversationReference, SendMessageAsync);
         }
 
         private async Task SendMessageAsync(ITurnContext turnContext, CancellationToken cancellationToken)

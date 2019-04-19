@@ -1,0 +1,6 @@
+﻿tunnels:
+    simple-web-api-bot:
+        addr: 5000
+        proto: http
+        bind_tls: true
+        host_header: localhost:5000

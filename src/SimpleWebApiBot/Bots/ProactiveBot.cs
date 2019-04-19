@@ -36,7 +36,11 @@ namespace SimpleWebApiBot.Bots
 
                     await turnContext.SendActivityAsync($"Starting a timer to go off in {seconds}s");
 
-                    _timers.AddTimer(turnContext.Activity.GetConversationReference(), seconds);
+                    var conversationReference = turnContext.Activity.GetConversationReference();
+
+                    _logger.LogInformation("----- Adding timer - ConversationReference: {@ConversationReference}", conversationReference);
+
+                    _timers.AddTimer(conversationReference, seconds);
                 }
                 else if (text.StartsWith("list", StringComparison.InvariantCultureIgnoreCase))
                 {

@@ -35,7 +35,9 @@ namespace SimpleWebApiBot.Controllers
         {
             _logger.LogTrace("----- BotController - Receiving activity: {@Activity}", activity);
 
-            return await _adapter.ProcessActivityAsync(string.Empty, activity, _bot.OnTurnAsync, default);
+            var authHeader = HttpContext.Request.Headers["Authorization"];
+
+            return await _adapter.ProcessActivityAsync(authHeader, activity, _bot.OnTurnAsync, default);
         }
     }
 }

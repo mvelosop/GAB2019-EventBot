@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <UserSecretsId>SimpleWebApiBot-a085234d-d165-4c53-a824-daf2b48c5654</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
