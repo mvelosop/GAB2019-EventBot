@@ -63,6 +63,8 @@ namespace SimpleWebApiBot.Timer
 
         private async Task SendMessageAsync(ITurnContext turnContext, CancellationToken cancellationToken)
         {
+            _logger.Verbose("Processing event in timer #{Number} - Activity: {@Activity}", Number, turnContext.Activity);
+
             await turnContext.SendActivityAsync($"Timer #{Number} finished! ({Seconds})s");
         }
     }

@@ -61,6 +61,8 @@ namespace SimpleWebApiBot
             });
 
             services.AddSingleton<Timers>();
+            services.AddSingleton<Conversations>();
+
             services.AddTransient<IBot, ProactiveBot>();
         }
     }
