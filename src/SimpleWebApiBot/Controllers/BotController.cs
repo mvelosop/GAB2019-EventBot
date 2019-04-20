@@ -54,7 +54,7 @@ namespace SimpleWebApiBot.Controllers
         [HttpPost("/simple-bot/events/{eventName}/{userName}")]
         public async Task<InvokeResponse> Events([FromRoute]string eventName, [FromRoute]string userName, [FromBody]object value)
         {
-            _logger.LogTrace("----- BotController - Receiving event: {EventName} - user: {UserName} ({Value})", eventName, userName, JsonConvert.SerializeObject(value));
+            _logger.LogTrace("----- BotController - Receiving event: \"{EventName}\" - user: \"{UserName}\" ({Value})", eventName, userName, JsonConvert.SerializeObject(value));
 
             var conversation = _conversations.Get(userName);
 
@@ -78,16 +78,23 @@ namespace SimpleWebApiBot.Controllers
 
             var botAppId = _configuration["BotWebApiApp:AppId"];
 
-            var claimsIdentity = new ClaimsIdentity(new List<Claim>
+            if (botAppId == string.Empty)
             {
-                // Adding claims for both Emulator and Channel.
-                new Claim(AuthenticationConstants.AudienceClaim, botAppId),
-                new Claim(AuthenticationConstants.AppIdClaim, botAppId),
-            });
+                await _adapter.ProcessActivityAsync(string.Empty, activity, _bot.OnTurnAsync, default);
+            }
+            else
+            {
+                var claimsIdentity = new ClaimsIdentity(new List<Claim>
+                {
+                    // Adding claims for both Emulator and Channel.
+                    new Claim(AuthenticationConstants.AudienceClaim, botAppId),
+                    new Claim(AuthenticationConstants.AppIdClaim, botAppId),
+                });
 
-            var botFrameworkAdapter = _adapter as BotFrameworkAdapter;
-            
-            await botFrameworkAdapter.ProcessActivityAsync(claimsIdentity, activity, _bot.OnTurnAsync, default);
+                var botFrameworkAdapter = _adapter as BotFrameworkAdapter;
+
+                await botFrameworkAdapter.ProcessActivityAsync(claimsIdentity, activity, _bot.OnTurnAsync, default);
+            }
 
             return new InvokeResponse
             {
