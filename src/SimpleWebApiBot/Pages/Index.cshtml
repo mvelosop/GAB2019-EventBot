@@ -1,5 +1,7 @@
 ﻿@page
 @model SimpleWebApiBot.Pages.IndexModel
+@inject SimpleWebApiBot.Timer.Timers timers
+@inject SimpleWebApiBot.Bots.Conversations conversations
 @{
     ViewData["Title"] = "Index";
 
@@ -7,6 +9,80 @@
     var baseUrl = $"{request.Scheme}://{request.Host}";
 }
 
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    table, th, td {
+        border: 1px solid grey;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+</style>
 <h1>Simple Web API Bot</h1>
 
-Bot messages endpoint: <strong>@(baseUrl)/simple-bot/messages</strong>    
+<h2>Bot endpoints</h2>
+<table>
+    <tr>
+        <th>Type</th>
+        <th>Endpoint</th>
+        <th>Method</th>
+        <th>Body</th>
+    </tr>
+    <tr>
+        <td>Messages</td>
+        <td><strong>@(baseUrl)/simple-bot/messages</strong></td>
+        <td>POST</td>
+        <td>Activity object</td>
+    </tr>
+    <tr>
+        <td>Events</td>
+        <td><strong>@(baseUrl)/simple-bot/events/{event-type}/{username}</strong></td>
+        <td>POST</td>
+        <td>{"Value":"Event payload, can be a simple value or a complex object"}</td>
+    </tr>
+</table>
+
+@if (conversations.Any())
+{
+    <h2>Conversations</h2>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>User Id</th>
+            <th>Channel</th>
+        </tr>
+        @foreach (var conversation in conversations)
+        {
+            <tr>
+                <td><strong>@conversation.Key</strong></td>
+                <td>@conversation.Value.User.Id</td>
+                <td>@conversation.Value.ChannelId</td>
+            </tr>
+        }
+    </table>
+}
+
+@if (timers.List.Any())
+{
+    <h2>Timers</h2>
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Duration (s)</th>
+            <th>Status</th>
+            <th>Elapsed</th>
+        </tr>
+        @foreach (var timer in timers.List)
+        {
+            <tr>
+                <td><strong>#@timer.Number</strong></td>
+                <td>@timer.Seconds</td>
+                <td>@timer.Status</td>
+                <td>@($"{timer.Elapsed / 1000:n3}")</td>
+            </tr>
+        }
+    </table>
+}
+

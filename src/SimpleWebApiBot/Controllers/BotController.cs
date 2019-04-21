@@ -74,7 +74,7 @@ namespace SimpleWebApiBot.Controllers
             activity.Value = value;
             activity.ValueType = typeof(object).FullName;
 
-            _logger.LogTrace("----- BotController - Receiving event activity: {@Activity}", activity);
+            _logger.LogTrace("----- BotController - Craft event activity: {@Activity}", activity);
 
             var botAppId = _configuration["BotWebApiApp:AppId"];
 

@@ -17,7 +17,7 @@ namespace SimpleWebApiBot.Timer
             IConfiguration configuration)
         {
             _adapter = adapter;
-            _botAppId = (configuration ?? throw new System.ArgumentNullException(nameof(configuration)))["BotWebApiApp:AppId"];
+            _botAppId = (configuration?.GetValue("BotWebApiApp:AppId", "*") ?? throw new System.ArgumentNullException(nameof(configuration)));
         }
 
         public List<Timer> List { get; set; } = new List<Timer>();

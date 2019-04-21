@@ -35,35 +35,45 @@ namespace SimpleWebApiBot.Bots
                 _logger.LogInformation("----- Receiving message activity - Text: {Text}", text);
 
                 var conversationReference = turnContext.Activity.GetConversationReference();
+                var username = conversationReference.User.Name;
 
                 _conversations.Save(conversationReference);
 
-                if (text.StartsWith("timer", StringComparison.InvariantCultureIgnoreCase))
+                if (text.StartsWith("timer ", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var seconds = Convert.ToInt32(text.Substring(text.IndexOf(" ")));
 
-                    await turnContext.SendActivityAsync($"Starting a timer to go off in {seconds}s");
+                    await turnContext.SendActivityAsync($"Starting a {seconds}s timer");
 
                     _logger.LogInformation("----- Adding timer - ConversationReference: {@ConversationReference}", conversationReference);
 
                     _timers.AddTimer(conversationReference, seconds);
                 }
-                else if (text.StartsWith("list", StringComparison.InvariantCultureIgnoreCase))
+                else if (text.StartsWith("timers", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var alarms = string.Join("\n", _timers.List.Select(a => $"- #{a.Number} [{a.Seconds}s] - {a.Status} ({a.Elapsed / 1000:n3}s)"));
+                    var alarms = string.Join("\n", _timers.List.Select(a => $"- **#{a.Number}** [{a.Seconds}s] - {a.Status} ({a.Elapsed / 1000:n3}s)"));
 
                     await turnContext.SendActivityAsync($"**TIMERS**\n{alarms}");
+                }
+                else if (text.StartsWith("conversations", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var conversations = string.Join("\n", _conversations.Select(c => $"- **{c.Key}** (Id: {c.Value.User.Id}): {c.Value.ChannelId}"));
+
+                    await turnContext.SendActivityAsync($"**CONVERSATIONS**\n{conversations}");
                 }
                 else
                 {
                     // Echo back to the user whatever they typed.
-                    await turnContext.SendActivityAsync($"You typed \"{text}\"");
+                    await turnContext.SendActivityAsync($"You (username: \"**{username}**\") typed \"{text}\"");
                 }
             }
             else if (turnContext.Activity.Type == ActivityTypes.Event)
             {
                 var value = JsonConvert.SerializeObject(turnContext.Activity.Value);
-                await turnContext.SendActivityAsync($"{turnContext.Activity.Name} event detected - Value: {value}");
+
+                _logger.LogInformation("----- Receiving event activity - Name: {Name} ({Value})", turnContext.Activity.Name, value);
+
+                await turnContext.SendActivityAsync($"**{turnContext.Activity.Name}** event detected - {value}");
             }
             else
             {

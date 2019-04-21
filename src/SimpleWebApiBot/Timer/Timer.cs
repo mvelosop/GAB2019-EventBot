@@ -58,7 +58,7 @@ namespace SimpleWebApiBot.Timer
 
             _logger.Information("----- Timer #{Number} [{Duration}s] finished ({Elapsed:n3}s)", Number, Seconds, Elapsed / 1000);
 
-            await _adapter.ContinueConversationAsync(_botAppId, ConversationReference, SendMessageAsync);
+            await _adapter.ContinueConversationAsync("*", ConversationReference, SendMessageAsync);
         }
 
         private async Task SendMessageAsync(ITurnContext turnContext, CancellationToken cancellationToken)
