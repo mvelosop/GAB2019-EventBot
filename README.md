@@ -6,14 +6,68 @@ This repo goes along with my blog post: **TBD**
 
 The bot can respond to arbitrary events sent to the endpoint POST /simple-bot/events/{event-name}/{user-name} where the Body contains an object { "Value": "anything, simple value or complex object" }
 
-## Set up
-
-### Run locally
+## Run locally with Bot Emulator
 
 These are the minimal steps to test the app locally:
 
 1. Run the app locally with VS 2019
 2. Run Bot Emulator and open the **SimpleWebApiBot.bot** file.
+
+## Run locally with Bot Service
+
+In this setup the bot app will be running locally, but the messages will go through the Bot Service, meaning you'll be able to use the Web Chat in the Bot Channel Registration, Skype and the Bot Emulator all at once.
+
+To achieve this you have to:
+
+1. Start **ngrok**
+
+2. Create a Bot Channel Registration in Azure
+
+3. Configure the bot's AppId and AppPassword in appsettings
+
+4. Start the web app locally
+
+So, let's get with the details now
+
+### Start ngrok
+
+Open a command prompt window on the project's `ngrok` folder and run `start-ngrok`
+
+You should see something like this:
+
+![](images/proactive-bot-ngrok-console.png)
+
+Copy the public address you get, similar to the highlighted one above.
+
+### Create a Bot Channel Registration
+
+Create the Bot Channel Registration (This is the access channel to the Bot Service) and take note of the created AppId and AppPassword, they should be something similar to these (fake values):
+
+```
+AppId       : ac48a878-97c5-4815-8d14-4a0ba67965a5
+AppPassword : Ngs&RYMo@0KQ1w38535%19O$
+```
+
+Configure the forwarding address from **ngrok** as the messaging endpoint, **appending** `/simple-bot/messages`.
+
+You should have something similar to this:
+
+![](images/proactive-bot-channel-registration.png)
+
+**Remember to save the above settings!**
+
+### Configure AppId and AppPassword
+
+Save the `AppId` and `AppPassword` assigned during the Bot Channel Registration `appsettings.json` or, better yet, as user secrets like this:
+
+```json
+{
+  "BotWebApiApp:AppId": "<your-bot-app-id>",
+  "BotWebApiApp:AppPassword": "<your-bot-app-password>"
+}
+```
+
+To access [User Secrets](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-2.2&tabs=windows), select **[right+click] > Manage User Secrets** on the project folder in the Solution Explorer.
 
 ## Test
 
@@ -39,22 +93,7 @@ These are the minimal steps to test the app locally:
 
 **NOTE:** It's necessary that there has been at least one interaction with the bot, to send events to the user.
 
-Keep in mind that username is "You" when using Azure's test web chat and "User" when using the emulator. You can check this in the home page.
-
-## ngrok
-
-You can use the script `ngrok\start-ngrok` to start **ngrok**.
-
-## Bot Service
-
-To use Bot Service the bot's `AppId` and `AppPassword` must be configured in `appsettings.json` or, better yet, as user secrets like this:
-
-```json
-{
-  "BotWebApiApp:AppId": "<your-bot-app-id>",
-  "BotWebApiApp:AppPassword": "<your-bot-app-password>"
-}
-```
+Keep in mind that username is "**You**" when using Azure's test web chat and "**User**" when using the emulator. You can check this in the home page.
 
 Hope this helps you.
 
