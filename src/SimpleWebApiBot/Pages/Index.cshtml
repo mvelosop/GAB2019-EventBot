@@ -40,7 +40,7 @@
         <td>Events</td>
         <td><strong>@(baseUrl)/simple-bot/events/{event-type}/{username}</strong></td>
         <td>POST</td>
-        <td>"Event payload, can be a simple value or a complex object"</td>
+        <td>Event payload, can be a simple value or a complex object</td>
     </tr>
 </table>
 
@@ -75,6 +75,8 @@
             <th>Duration (s)</th>
             <th>Status</th>
             <th>Elapsed</th>
+            <th>Channel</th>
+            <th>Conversation Id</th>
         </tr>
         @foreach (var timer in timers.List)
         {
@@ -83,6 +85,8 @@
                 <td>@timer.Seconds</td>
                 <td>@timer.Status</td>
                 <td>@($"{timer.Elapsed / 1000:n3}")</td>
+                <td>@timer.ConversationReference.ChannelId</td>
+                <td>@timer.ConversationReference.Conversation.Id</td>
             </tr>
         }
     </table>

@@ -69,7 +69,7 @@ namespace SimpleWebApiBot.Bots
                 }
                 else if (text.StartsWith("conversations", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var conversations = string.Join("\n", _conversations.Select(c => $"- **{c.Key}** (Id: {c.Value.User.Id}): {c.Value.ChannelId}"));
+                    var conversations = string.Join("\n", _conversations.Select(c => $"- **{c.Key}**: {c.Value.ChannelId}({c.Value.User.Id})"));
 
                     await turnContext.SendActivityAsync($"**CONVERSATIONS**\n{conversations}");
                 }
