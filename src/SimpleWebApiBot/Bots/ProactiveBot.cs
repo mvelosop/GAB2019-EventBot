@@ -69,14 +69,14 @@ namespace SimpleWebApiBot.Bots
                 }
                 else if (text.StartsWith("conversations", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var conversations = string.Join("\n", _conversations.Select(c => $"- **{c.Key}**: {c.Value.ChannelId}({c.Value.User.Id})"));
+                    var conversations = string.Join("\n", _conversations.Select(c => $"- **{c.Key}**: {c.Value.ChannelId} ({c.Value.User.Id})"));
 
                     await turnContext.SendActivityAsync($"**CONVERSATIONS**\n{conversations}");
                 }
                 else
                 {
                     // Echo back to the user whatever they typed.
-                    await turnContext.SendActivityAsync($"You (username: \"**{username}**\") typed \"{text}\"");
+                    await turnContext.SendActivityAsync($"You (\"**{username}**\") typed \"{text}\"");
                 }
             }
             else if (activityType == ActivityTypes.Event)
