@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -52,9 +53,16 @@ namespace SimpleWebApiBot.Controllers
         }
 
         [HttpPost("/simple-bot/events/{eventName}/{userName}")]
-        public async Task<InvokeResponse> Events([FromRoute]string eventName, [FromRoute]string userName, [FromBody]object value)
+        public async Task<InvokeResponse> Events([FromRoute]string eventName, [FromRoute]string userName)
         {
-            _logger.LogTrace("----- BotController - Receiving event: \"{EventName}\" - user: \"{UserName}\" ({Value})", eventName, userName, JsonConvert.SerializeObject(value));
+            string body = null;
+
+            using (var reader = new StreamReader(ControllerContext.HttpContext.Request.Body))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            _logger.LogTrace("----- BotController - Receiving event: \"{EventName}\" - user: \"{UserName}\" ({Body})", eventName, userName, body);
 
             var conversation = _conversations.Get(userName);
 
@@ -63,7 +71,7 @@ namespace SimpleWebApiBot.Controllers
                 return new InvokeResponse
                 {
                     Status = 404,
-                    Body = value
+                    Body = body
                 };
             }
 
@@ -71,8 +79,8 @@ namespace SimpleWebApiBot.Controllers
 
             activity.Name = eventName;
             activity.RelatesTo = null;
-            activity.Value = value;
-            activity.ValueType = typeof(object).FullName;
+            activity.Value = body;
+            activity.ValueType = typeof(string).FullName;
 
             _logger.LogTrace("----- BotController - Craft event activity: {@Activity}", activity);
 
@@ -99,7 +107,7 @@ namespace SimpleWebApiBot.Controllers
             return new InvokeResponse
             {
                 Status = 200,
-                Body = value
+                Body = body
             };
         }
     }

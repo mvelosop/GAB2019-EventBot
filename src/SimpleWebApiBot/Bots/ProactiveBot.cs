@@ -28,16 +28,28 @@ namespace SimpleWebApiBot.Bots
 
         public async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default)
         {
-            if (turnContext.Activity.Type == ActivityTypes.Message)
+            var activityType = turnContext.Activity.Type;
+            var conversationReference = (ConversationReference)null;
+
+            if (activityType == ActivityTypes.Message || activityType == ActivityTypes.ConversationUpdate)
+            {
+                conversationReference = turnContext.Activity.GetConversationReference();
+
+                _logger.LogTrace("----- ProactiveBot - Get conversation reference - Activity type: {ActivityType} User: \"{User}\" - ConversationReference: {@ConversationReference}", activityType,  conversationReference.User.Name, conversationReference);
+
+                if (conversationReference.User.Name != null)
+                {
+                    _conversations.Save(conversationReference);
+                }
+            }
+
+            if (activityType == ActivityTypes.Message)
             {
                 var text = turnContext.Activity.Text.Trim();
 
                 _logger.LogInformation("----- Receiving message activity - Text: {Text}", text);
 
-                var conversationReference = turnContext.Activity.GetConversationReference();
                 var username = conversationReference.User.Name;
-
-                _conversations.Save(conversationReference);
 
                 if (text.StartsWith("timer ", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -67,7 +79,7 @@ namespace SimpleWebApiBot.Bots
                     await turnContext.SendActivityAsync($"You (username: \"**{username}**\") typed \"{text}\"");
                 }
             }
-            else if (turnContext.Activity.Type == ActivityTypes.Event)
+            else if (activityType == ActivityTypes.Event)
             {
                 var value = JsonConvert.SerializeObject(turnContext.Activity.Value);
 

@@ -57,6 +57,7 @@ namespace SimpleWebApiBot.Timer
             Status = "Finished";
 
             _logger.Information("----- Timer #{Number} [{Duration}s] finished ({Elapsed:n3}s)", Number, Seconds, Elapsed / 1000);
+            _logger.Verbose("----- Continuing conversation - AppId: {AppId} - Conversation: {ConversationId}", _botAppId, ConversationReference.Conversation.Id);
 
             await _adapter.ContinueConversationAsync(_botAppId, ConversationReference, SendMessageAsync);
         }
