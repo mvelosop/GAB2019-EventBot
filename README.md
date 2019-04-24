@@ -87,11 +87,11 @@ To access [User Secrets](https://docs.microsoft.com/en-us/aspnet/core/security/a
 
    ![](images/proactive-bot-event-interaction.png)
 
-5. When you refresh the home page (http://localhost:5000) you should see something like this
+5. When you refresh the home page (http://localhost:5000) you should see something like this (after connecting from Skype and the Bot Channel Registration Web Chat in the Azure portal):
 
    ![](images/proactive-bot-home-page.png)
 
-**NOTE:** It's necessary that there has been at least one interaction with the bot, to send events to the user.
+**NOTE:** You can only send events to conversations that show in the home page.
 
 Keep in mind that username is "**You**" when using Azure's test web chat and "**User**" when using the emulator. You can check this in the home page.
 

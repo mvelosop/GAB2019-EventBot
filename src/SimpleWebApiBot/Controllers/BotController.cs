@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,6 +57,8 @@ namespace SimpleWebApiBot.Controllers
         public async Task<InvokeResponse> Events([FromRoute]string eventName, [FromRoute]string userName)
         {
             string body = null;
+
+            userName = WebUtility.UrlDecode(userName);
 
             using (var reader = new StreamReader(ControllerContext.HttpContext.Request.Body))
             {

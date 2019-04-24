@@ -19,6 +19,11 @@
         border-collapse: collapse;
         padding: 5px;
     }
+
+    .command {
+        font-family:Courier New, Courier, monospace;
+        font-size: smaller;
+    }
 </style>
 <h1>Simple Web API Bot</h1>
 
@@ -87,6 +92,26 @@
                 <td>@($"{timer.Elapsed / 1000:n3}")</td>
                 <td>@timer.ConversationReference.ChannelId</td>
                 <td>@timer.ConversationReference.Conversation.Id</td>
+            </tr>
+        }
+    </table>
+}
+
+@if (conversations.Any())
+{
+    <h2>curl send event commands</h2>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Channel</th>
+            <th>Command</th>
+        </tr>
+        @foreach (var conversation in conversations)
+        {
+            <tr>
+                <td><strong>@conversation.Key</strong></td>
+                <td>@conversation.Value.ChannelId</td>
+                <td class="command">curl -d "Event payload" -H "Content-Type: application/json" -X POST @(baseUrl)/simple-bot/events/curl-message/@(System.Net.WebUtility.UrlEncode(conversation.Key))</td>
             </tr>
         }
     </table>
