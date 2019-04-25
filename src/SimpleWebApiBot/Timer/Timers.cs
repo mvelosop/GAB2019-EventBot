@@ -2,6 +2,7 @@
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -28,10 +29,9 @@ namespace SimpleWebApiBot.Timer
         public void AddTimer(ConversationReference reference, int seconds)
         {
             var timer = new Timer(_adapter, _botAppId, reference, seconds, List.Count + 1);
+            List.Add(timer);
 
             Task.Run(() => timer.Start());
-
-            List.Add(timer);
         }
     }
 }

@@ -41,6 +41,8 @@ namespace SimpleWebApiBot.Controllers
             _bot = bot ?? throw new ArgumentNullException(nameof(bot));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _conversations = conversations ?? throw new ArgumentNullException(nameof(conversations));
+
+            _logger.LogTrace("----- INSTANCE CREATED - {ClassName}", GetType().Name);
         }
 
         [HttpPost("/simple-bot/messages")]

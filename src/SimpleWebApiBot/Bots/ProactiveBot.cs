@@ -24,6 +24,8 @@ namespace SimpleWebApiBot.Bots
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _timers = timers ?? throw new ArgumentNullException(nameof(timers));
             _conversations = conversations ?? throw new ArgumentNullException(nameof(conversations));
+
+            _logger.LogTrace("----- INSTANCE CREATED - {ClassName}", GetType().Name);
         }
 
         public async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default)
