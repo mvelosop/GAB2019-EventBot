@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Adapters;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SimpleWebApiBot.ScenarioTests.Setup;
 using System;
@@ -26,12 +28,18 @@ namespace SimpleWebApiBot.ScenarioTests.Scenarios
         public async Task BotShouldEchoBack()
         {
             // Arrange -----------------
+            var testFlow = CreateTestFlow()
+                .Send("HI")
+                .AssertReply("You (\"**User1**\") typed \"HI\"");
 
             // Act ---------------------
+            await testFlow.StartTestAsync();
 
             // Assert ------------------
 
         }
+
+        private TestFlow CreateTestFlow() => new TestFlow(GetService<TestAdapter>(), GetService<IBot>());
 
         private T GetService<T>() => _scope.ServiceProvider.GetRequiredService<T>();
     }

@@ -1,10 +1,14 @@
 ﻿using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Adapters;
+using Microsoft.Bot.Builder.Integration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 using SimpleWebApiBot.Bots;
+using SimpleWebApiBot.ScenarioTests.Helpers;
+using SimpleWebApiBot.Timer;
 using System;
 using System.IO;
 
@@ -71,6 +75,27 @@ namespace SimpleWebApiBot.ScenarioTests.Setup
 
             // Bot configuration
             services.AddTransient<IBot, ProactiveBot>();
+
+            services.AddScoped<TestAdapter>(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<TestAdapter>>();
+                var adapter = new TestAdapter();
+
+                adapter.OnTurnError = async (context, exception) =>
+                {
+                    logger.LogError(exception, "----- BOT ERROR - Activity: {@Activity}", context.Activity);
+                    await context.SendActivityAsync($"ERROR: {exception.Message}");
+                };
+
+                return adapter;
+
+            });
+
+            services.AddScoped<IAdapterIntegration, TestAdapterIntegration>();
+
+            services.AddScoped<Timers>();
+            services.AddScoped<Conversations>();
+
         }
 
         private IConfiguration GetConfiguration() =>
