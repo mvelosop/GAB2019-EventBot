@@ -66,7 +66,7 @@ namespace SimpleWebApiBot.Timer
         {
             _logger.Verbose("Processing event in timer #{Number} - Activity: {@Activity}", Number, turnContext.Activity);
 
-            await turnContext.SendActivityAsync($"Timer #{Number} finished! ({Seconds})s");
+            await turnContext.SendActivityAsync($"Timer #{Number} finished! ({(Elapsed / 1000):n3}s)");
         }
     }
 }
