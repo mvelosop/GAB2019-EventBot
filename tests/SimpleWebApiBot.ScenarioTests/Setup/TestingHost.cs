@@ -24,13 +24,13 @@ namespace SimpleWebApiBot.ScenarioTests.Setup
 
             ConfigureLogging(Configuration);
 
+            Log.Information("----- STARTING TESTING HOST ({ApplicationContext}) @{Date}", ApplicationContext, DateTime.Now);
+
             var services = new ServiceCollection();
 
             ConfigureServices(services);
 
             RootScope = services.BuildServiceProvider().CreateScope();
-
-            Log.Verbose("----- INSTANCE CREATED - {ClassName}", GetType().Name);
         }
 
         public IConfiguration Configuration { get; }
@@ -74,8 +74,6 @@ namespace SimpleWebApiBot.ScenarioTests.Setup
             services.AddLogging();
 
             // Bot configuration
-            services.AddTransient<IBot, ProactiveBot>();
-
             services.AddScoped<TestAdapter>(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<TestAdapter>>();
@@ -88,7 +86,6 @@ namespace SimpleWebApiBot.ScenarioTests.Setup
                 };
 
                 return adapter;
-
             });
 
             services.AddScoped<IAdapterIntegration, TestAdapterIntegration>();
@@ -96,6 +93,7 @@ namespace SimpleWebApiBot.ScenarioTests.Setup
             services.AddScoped<Timers>();
             services.AddScoped<Conversations>();
 
+            services.AddTransient<IBot, ProactiveBot>();
         }
 
         private IConfiguration GetConfiguration() =>
@@ -109,7 +107,17 @@ namespace SimpleWebApiBot.ScenarioTests.Setup
         private string GetEnvironmentName() => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Testing";
 
         #region IDisposable Support
+
         private bool disposedValue = false; // To detect redundant calls
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -136,14 +144,6 @@ namespace SimpleWebApiBot.ScenarioTests.Setup
         //   Dispose(false);
         // }
 
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
-        }
-        #endregion
+        #endregion IDisposable Support
     }
 }
