@@ -48,7 +48,9 @@ namespace SimpleWebApiBot.Controllers
         [HttpPost("/simple-bot/messages")]
         public async Task<InvokeResponse> Messages([FromBody]Activity activity)
         {
-            _logger.LogTrace("----- BotController - Receiving message activity: {@Activity}", activity);
+            var entities = JsonConvert.SerializeObject(activity.Entities);
+
+            _logger.LogTrace("----- BotController - Receiving message activity: {@Activity} (Entities: {Entities})", activity, entities);
 
             var authHeader = HttpContext.Request.Headers["Authorization"];
 
@@ -64,7 +66,10 @@ namespace SimpleWebApiBot.Controllers
 
             using (var reader = new StreamReader(ControllerContext.HttpContext.Request.Body))
             {
-                body = await reader.ReadToEndAsync();
+                // quick and dirty sanitization
+                body = (await reader.ReadToEndAsync())
+                    .Replace("script", "", StringComparison.InvariantCultureIgnoreCase)
+                    .Replace("href", "", StringComparison.InvariantCultureIgnoreCase);
             }
 
             _logger.LogTrace("----- BotController - Receiving event: \"{EventName}\" - user: \"{UserName}\" ({Body})", eventName, userName, body);
@@ -73,47 +78,23 @@ namespace SimpleWebApiBot.Controllers
 
             if (conversation == null)
             {
-                return new InvokeResponse
-                {
-                    Status = 404,
-                    Body = body
-                };
+                return new InvokeResponse { Status = 404, Body = body };
             }
-
-            var activity = conversation.GetContinuationActivity();
-
-            activity.Name = eventName;
-            activity.RelatesTo = null;
-            activity.Value = body;
-            activity.ValueType = typeof(string).FullName;
-
-            _logger.LogTrace("----- BotController - Craft event activity: {@Activity}", activity);
 
             var botAppId = _configuration["BotWebApiApp:AppId"];
 
-            if (botAppId == string.Empty)
+            await _adapter.ContinueConversationAsync(botAppId, conversation, async (context, token) =>
             {
-                await _adapter.ProcessActivityAsync(string.Empty, activity, _bot.OnTurnAsync, default);
-            }
-            else
-            {
-                var claimsIdentity = new ClaimsIdentity(new List<Claim>
-                {
-                    // Adding claims for both Emulator and Channel.
-                    new Claim(AuthenticationConstants.AudienceClaim, botAppId),
-                    new Claim(AuthenticationConstants.AppIdClaim, botAppId),
-                });
+                context.Activity.Name = eventName;
+                context.Activity.RelatesTo = null;
+                context.Activity.Value = body;
 
-                var botFrameworkAdapter = _adapter as BotFrameworkAdapter;
+                _logger.LogTrace("----- BotController - Craft event activity: {@Activity}", context.Activity);
 
-                await botFrameworkAdapter.ProcessActivityAsync(claimsIdentity, activity, _bot.OnTurnAsync, default);
-            }
+                await _bot.OnTurnAsync(context, token);
+            });
 
-            return new InvokeResponse
-            {
-                Status = 200,
-                Body = body
-            };
+            return new InvokeResponse { Status = 200, Body = body };
         }
     }
 }

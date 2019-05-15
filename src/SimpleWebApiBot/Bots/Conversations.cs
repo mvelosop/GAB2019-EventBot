@@ -18,7 +18,10 @@ namespace SimpleWebApiBot.Bots
 
         public void Save(ConversationReference conversationReference)
         {
-            AddOrUpdate(conversationReference.User.Name, conversationReference, (key, oldValue) => conversationReference);
+            AddOrUpdate(
+                conversationReference.User.Name,
+                conversationReference,
+                (key, oldValue) => conversationReference);
         }
     }
 }

@@ -55,17 +55,13 @@
     <table>
         <tr>
             <th>Username</th>
-            <th>User Id</th>
             <th>Channel</th>
-            <th>Conversation Id</th>
         </tr>
         @foreach (var conversation in conversations)
         {
             <tr>
                 <td><strong>@conversation.Key</strong></td>
-                <td>@conversation.Value.User.Id</td>
                 <td>@conversation.Value.ChannelId</td>
-                <td>@conversation.Value.Conversation.Id</td>
             </tr>
         }
     </table>
