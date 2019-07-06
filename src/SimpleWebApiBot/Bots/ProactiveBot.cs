@@ -83,15 +83,16 @@ namespace SimpleWebApiBot.Bots
             }
             else if (activityType == ActivityTypes.Event)
             {
-                var value = JsonConvert.SerializeObject(turnContext.Activity.Value);
+                var name = turnContext.Activity.Name;
+                var value = turnContext.Activity.Value;
 
-                _logger.LogInformation("----- Receiving event activity - Name: {Name} ({Value})", turnContext.Activity.Name, value);
+                _logger.LogInformation("----- Receiving event activity - Name: {Name} ({Value})", name, value);
 
-                await turnContext.SendActivityAsync($"**{turnContext.Activity.Name}** event detected - {value}");
+                await turnContext.SendActivityAsync($"**{name}** event detected - Payload: {value}");
             }
             else
             {
-                await turnContext.SendActivityAsync($"{turnContext.Activity.Type} event detected");
+                await turnContext.SendActivityAsync($"**{turnContext.Activity.Type}** activity received");
             }
         }
     }
