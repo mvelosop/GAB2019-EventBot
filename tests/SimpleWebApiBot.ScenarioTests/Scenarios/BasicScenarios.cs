@@ -14,7 +14,7 @@ using Xunit;
 
 namespace SimpleWebApiBot.ScenarioTests.Scenarios
 {
-    public class BasicScenarios : IClassFixture<TestingHost>
+    public class BasicScenarios : IClassFixture<TestingHost>, IDisposable
     {
         private readonly IServiceScope _scope;
         private readonly ILogger<BasicScenarios> _logger;
@@ -33,7 +33,7 @@ namespace SimpleWebApiBot.ScenarioTests.Scenarios
             // Arrange -----------------
 
             // Act ---------------------
-            await CreateTestFlow()
+            await GetService<TestFlow>()
                 .Send("HI")
                 .AssertReply("You (\"**User1**\") typed \"HI\"")
                 .StartTestAsync();
@@ -49,16 +49,21 @@ namespace SimpleWebApiBot.ScenarioTests.Scenarios
             var timers = GetService<Timers>();
 
             // Act ---------------------
-            await CreateTestFlow()
+            await GetService<TestFlow>()
                 .Send("TIMER 2")
                 .AssertReply("Starting a 2s timer")
                 .StartTestAsync();
 
-            await CreateTestFlow()
+            await GetService<TestFlow>()
                 .Send("TIMER 3")
                 .AssertReply("Starting a 3s timer")
-                .AssertReply(activity => activity.AsMessageActivity().Text.Should().StartWith("Timer #1 finished! (2"), null, 2100)
-                .AssertReply(activity => activity.AsMessageActivity().Text.Should().StartWith("Timer #2 finished! (3"), null, 3100)
+                
+                .AssertReply(activity => activity.AsMessageActivity().Text
+                    .Should().StartWith("Timer #1 finished! (2"), null, 2100)
+
+                .AssertReply(activity => activity.AsMessageActivity().Text
+                    .Should().StartWith("Timer #2 finished! (3"), null, 3100)
+                
                 .StartTestAsync();
 
             // Assert ------------------
@@ -71,8 +76,42 @@ namespace SimpleWebApiBot.ScenarioTests.Scenarios
 
         }
 
-        private TestFlow CreateTestFlow() => new TestFlow(GetService<TestAdapter>(), GetService<IBot>());
-
         private T GetService<T>() => _scope.ServiceProvider.GetRequiredService<T>();
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _scope.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~BasicScenarios()
+        // {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }
