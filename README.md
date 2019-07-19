@@ -2,7 +2,10 @@
 
 This repo contains the implementation of a simple bot with Bot Builder v4 C# SDK using an ASP.NET Core Web API app.
 
-This repo goes along with my blog post: **TBD**
+This repo goes along with two of my blog posts:
+
+- [How to receive events in a Bot Framework SDK v4 Web API bot?](https://www.coderepo.blog/posts/how-to-receive-events-bot-framework-sdk-v4-web-api-bot/)
+- [How to test a Bot Framework SDK v4 bot?](https://www.coderepo.blog/posts/how-to-test-bot-framework-sdk-v4-bot/)
 
 The bot can respond to arbitrary events sent to the endpoint POST /simple-bot/events/{event-name}/{user-name} where the Body contains an object { "Value": "anything, simple value or complex object" }
 
@@ -91,7 +94,7 @@ To access [User Secrets](https://docs.microsoft.com/en-us/aspnet/core/security/a
 
    ![](images/proactive-bot-home-page.png)
 
-**NOTE:** You can only send events to conversations that show in the home page.
+**NOTE:** You can only send events to conversations shown in the home page.
 
 Keep in mind that username is "**You**" when using Azure's test web chat and "**User**" when using the emulator. You can check this in the home page.
 
