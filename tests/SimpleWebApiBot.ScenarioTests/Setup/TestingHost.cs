@@ -37,10 +37,7 @@ namespace SimpleWebApiBot.ScenarioTests.Setup
 
         public IServiceScope RootScope { get; }
 
-        public IServiceScope CreateScope()
-        {
-            return RootScope.ServiceProvider.CreateScope();
-        }
+        public IServiceScope CreateScope() => RootScope.ServiceProvider.CreateScope();
 
         private void ConfigureLogging(IConfiguration configuration)
         {
@@ -69,7 +66,7 @@ namespace SimpleWebApiBot.ScenarioTests.Setup
         private void ConfigureServices(ServiceCollection services)
         {
             // General infrastructure services configuration
-            services.AddSingleton<IConfiguration>(sp => Configuration);
+            services.AddSingleton(Configuration);
             services.AddSingleton(new LoggerFactory().AddSerilog());
             services.AddLogging();
 
@@ -93,6 +90,7 @@ namespace SimpleWebApiBot.ScenarioTests.Setup
             services.AddScoped<Timers>();
             services.AddScoped<Conversations>();
 
+            services.AddTransient<TestFlow>(sp => new TestFlow(sp.GetService<TestAdapter>(), sp.GetService<IBot>()));
             services.AddTransient<IBot, ProactiveBot>();
         }
 
