@@ -28,19 +28,22 @@ namespace SimpleWebApiBot.Controllers
         private readonly IBot _bot;
         private readonly IConfiguration _configuration;
         private readonly Conversations _conversations;
+        private readonly Timers _timers;
 
         public BotController(
             ILogger<BotController> logger,
             IAdapterIntegration adapter,
             IBot bot,
             IConfiguration configuration,
-            Conversations conversations)
+            Conversations conversations,
+            Timers timers)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _adapter = adapter ?? throw new ArgumentNullException(nameof(adapter));
             _bot = bot ?? throw new ArgumentNullException(nameof(bot));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _conversations = conversations ?? throw new ArgumentNullException(nameof(conversations));
+            _timers = timers ?? throw new ArgumentNullException(nameof(timers));
 
             _logger.LogTrace("----- INSTANCE CREATED - {ClassName}", GetType().Name);
         }
@@ -95,6 +98,12 @@ namespace SimpleWebApiBot.Controllers
             });
 
             return new InvokeResponse { Status = 200, Body = body };
+        }
+
+        [HttpGet("simple-bot/api/timers")]
+        public ActionResult<Timers> GetTimers()
+        {
+            return Ok(_timers.List);
         }
     }
 }

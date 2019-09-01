@@ -2,10 +2,11 @@
 
 This repo contains the implementation of a simple bot with Bot Builder v4 C# SDK using an ASP.NET Core Web API app.
 
-This repo goes along with two of my blog posts:
+This repo goes along with three of my blog posts:
 
 - [How to receive events in a Bot Framework SDK v4 Web API bot?](https://www.coderepo.blog/posts/how-to-receive-events-bot-framework-sdk-v4-web-api-bot/)
 - [How to test a Bot Framework SDK v4 bot?](https://www.coderepo.blog/posts/how-to-test-bot-framework-sdk-v4-bot/)
+- [How to do integration testing for a Bot Framework SDK v4 event bot?](https://www.coderepo.blog/posts/how-to-do-integration-testing-bot-framework-v4-event-bot/)
 
 The bot can respond to arbitrary events sent to the endpoint POST /simple-bot/events/{event-name}/{user-name} where the Body contains an object { "Value": "anything, simple value or complex object" }
 
